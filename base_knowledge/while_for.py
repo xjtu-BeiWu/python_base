@@ -48,7 +48,18 @@ class Fib(object):
 
 
 # for generation
+def fib(max):
+    a, b = 0, 1
+    while max:
+        r = b
+        a, b = b, a+b
+        max -= 1
+        yield r
+
 
 if __name__ == '__main__':
     for i in Fib(5):
         print(i)
+    for j in fib(5):
+        print j
+
