@@ -21,7 +21,7 @@ def portrait(name, **kwargs):
 
 # 关于局部变量和全局变量
 def fun():
-    global a
+    global a # 使用之前定义的全局变量a
     a = 2020
     return a + 1
 
