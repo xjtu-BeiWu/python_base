@@ -4,6 +4,9 @@
 # File: def_func.py
 # IDE: PyCharm
 
+import numpy as np
+
+
 # *表示是可变参数，可迭代的对象。
 def report(name, *grades):
     total_grade = 0
@@ -21,7 +24,7 @@ def portrait(name, **kwargs):
 
 # 关于局部变量和全局变量
 def fun():
-    global a # 使用之前定义的全局变量a
+    global a  # 使用之前定义的全局变量a
     a = 2020
     return a + 1
 
