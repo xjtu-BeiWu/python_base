@@ -19,7 +19,17 @@ def portrait(name, **kwargs):
         print(k, v)
 
 
+# 关于局部变量和全局变量
+def fun():
+    global a
+    a = 2020
+    return a + 1
+
+
 if __name__ == '__main__':
     portrait('Bella', age=27, country='China', education='doctor')
     report('Bella', 100, 100, 100)
-
+    a = None
+    print(a)
+    fun()
+    print(a)
