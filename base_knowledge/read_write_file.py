@@ -16,7 +16,7 @@ def read(file_path):
     print(content)
     file.close()
 
-file_path = '/test_file/my_file.txt'
+file_path = '../test_file/my_file.txt'
 read_write(file_path)
 read(file_path)
 
