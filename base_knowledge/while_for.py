@@ -61,5 +61,5 @@ if __name__ == '__main__':
     for i in Fib(5):
         print(i)
     for j in fib(5):
-        print j
+        print(j)
 
