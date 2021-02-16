@@ -1,3 +1,4 @@
 This is my first test line.
 This is the second test line.
 This is the third test line.
+This is appended line.
