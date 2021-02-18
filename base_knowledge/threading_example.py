@@ -8,6 +8,8 @@
 import threading
 import time
 
+from queue import Queue
+
 
 def thread_job():
     print('This is a thread of %s' % threading.current_thread())
@@ -39,7 +41,7 @@ def main():
     #
     # # 获取正在运行的线程信息
     # print(threading.current_thread())
-    thread1 = threading.Thread(target=t1, name='t1')
+    thread1 = threading.Thread(target=t1, name='t1')  # t1后面没有括号，它只是一个索引
     thread2 = threading.Thread(target=t2, name='t2')
     thread1.start()
     thread2.start()
@@ -48,5 +50,29 @@ def main():
     print('all threads done!\n')
 
 
+# 多线程返回值问题：多线程中是没有返回值的，这时候需要引入队列保存结果，在线程执行完成后，从队列中获取存储结果
+def job(d, q):
+    for i in range(len(d)):
+        d[i] = d[i] ** 2
+    q.put(d)
+
+def multithreading(data):
+    q = Queue()
+    threads = []
+    for i in range(len(data)):
+        t = threading.Thread(target=job, args=(data[i], q))
+        t.start()
+        threads.append(t)
+    for thread in threads:
+        thread.join()
+    results = []
+    for _ in range(len(data)):
+        results.append(q.get())
+    return results
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    data = [[1, 2, 3], [2, 3, 4], [4, 5, 6]]
+    re = multithreading(data)
+    print(re)
