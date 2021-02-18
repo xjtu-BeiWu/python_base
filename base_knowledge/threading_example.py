@@ -56,17 +56,21 @@ def job(d, q):
         d[i] = d[i] ** 2
     q.put(d)
 
-def multithreading(data):
+
+def multithreading(d):
     q = Queue()
     threads = []
-    for i in range(len(data)):
-        t = threading.Thread(target=job, args=(data[i], q))
+    # 在多线程中定义四个线程，启动线程，并且将线程添加到多线程列表中
+    for i in range(len(d)):
+        t = threading.Thread(target=job, args=(d[i], q))
         t.start()
         threads.append(t)
+    # join四个线程到主线程
     for thread in threads:
         thread.join()
     results = []
-    for _ in range(len(data)):
+    # 从列表中获取队列中存储的结果
+    for _ in range(len(d)):
         results.append(q.get())
     return results
 
