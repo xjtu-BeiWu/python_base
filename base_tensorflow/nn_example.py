@@ -37,20 +37,28 @@ with tf.Session() as sess:
     sess.run(init)
 
     # 散点图显示真实数据关系
+    # 新建绘图窗口
     fig = plt.figure()
+    # 设置画布大小为一行一列一块
     ax = fig.add_subplot(1, 1, 1)
     ax.scatter(x_data, y_data)
+    # show以后不暂停
     plt.ion()
+    # 显示图像
     plt.show()
 
     for i in range(1000):
         sess.run(train_step, feed_dict={x_input: x_data, y_output: y_data})
         if i % 50 == 0:
+            # noinspection PyBroadException
             try:
+                # 新增一条线后删除原来的线
                 ax.lines.remove(lines[0])
             except Exception:
                 pass
             prediction_value = sess.run(prediction, feed_dict={x_input: x_data})
+            # 可视化线条
             lines = ax.plot(x_data, prediction_value, 'r-', lw=5)
+            # 每次循环暂停1s
             plt.pause(1)
             # print(sess.run(loss, feed_dict={x_input: x_data, y_output: y_data}))
