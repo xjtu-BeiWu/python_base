@@ -22,6 +22,7 @@ def add_layer(inputs, in_size, out_size, layer_name, activation_function=None):
     weights = tf.Variable(tf.random_normal([in_size, out_size]))
     biases = tf.Variable(tf.zeros([1, out_size])+0.1,)
     wx_plus_b = tf.add(tf.matmul(inputs, weights), biases)
+    # 增加dropout层，keep_prob为保留概率，保留结果所占比例。
     wx_plus_b = tf.nn.dropout(wx_plus_b, keep_prob)
     if activation_function is None:
         outputs = wx_plus_b
