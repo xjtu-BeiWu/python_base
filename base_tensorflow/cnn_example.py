@@ -72,11 +72,17 @@ prediction = tf.nn.softmax(tf.matmul(h_fc1_drop, w_fc2)+b_fc2)
 cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_input*tf.log(prediction), reduction_indices=[1]))
 train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 
+saver = tf.train.Saver()
 sess = tf.Session()
 sess.run(tf.global_variables_initializer())
 
 for i in range(1000):
+    # 其中的100代表返回100个训练数据集和对应的标签
     batch_x_input, batch_y_input = mnist.train.next_batch(100)
     sess.run(train_step, feed_dict={x_input: batch_x_input, y_input: batch_y_input, keep_prob: 0.5})
     if i % 50 == 0:
         print(compute_accuracy_prob(mnist.test.images[:1000], mnist.test.labels[:1000]))
+
+save_path = saver.save(sess, '../my_net/save_net_cnn.ckpt')
+print('Save to path: ', save_path)
+print('Everything is finished!')
