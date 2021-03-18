@@ -6,6 +6,7 @@
 
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
+from tensorflow.python.ops.rnn import dynamic_rnn
 tf.set_random_seed(1)
 
 mnist = input_data.read_data_sets('MNIST_DATA', one_hot=True)
@@ -40,8 +41,36 @@ def rnn(x_inputs, weights, biases):
     x_in = tf.matmul(x_inputs, weights['in']) + biases['in']
     # x_in(128 batch, 28 step, 128 hidden)
     x_in = tf.reshape(x_in, [-1, n_steps, n_hidden_units])
-    lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(n_hidden_units, forget_bias=1.0, state_is_tuple=True)
-    _init_state = lstm_cell.zero_state(batch_size, dtype=tf.float32)
-    outputs, states = tf.nn.dynamic_rnn(lstm_cell, x_in, initial_state=_init_state, time_major=False)
-    results = tf.matmul(states[1], weights['out']) + biases['out']
+    lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(n_hidden_units)
+    init_state = lstm_cell.zero_state(batch_size, dtype=tf.float32)
+    outputs, states = dynamic_rnn(lstm_cell, x_in, initial_state=init_state)
+    outputs = tf.unstack(tf.transpose(outputs, [1, 0, 2]))
+    results = tf.matmul(outputs[-1], weights['out']) + biases['out']
     return results
+
+
+prediction = rnn(x, w, b)
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y))
+train_op = tf.train.AdamOptimizer(lr).minimize(cost)
+
+correct_prediction = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
+accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+
+with tf.Session() as sess:
+    init = tf.global_variables_initializer()
+    sess.run(init)
+    step = 0
+
+    while step * batch_size < training_iters:
+        batch_x_input, batch_y_input = mnist.train.next_batch(batch_size)
+        batch_xs = batch_x_input.reshape([batch_size, n_steps, n_inputs])
+        sess.run([train_op], feed_dict={
+            x: batch_xs,
+            y: batch_y_input,
+        })
+        if step % 20 == 0:
+            print(sess.run(accuracy, feed_dict={
+                x: batch_xs,
+                y: batch_y_input,
+            }))
+        step += 1
